@@ -1,0 +1,66 @@
+server {
+    listen 80;
+    listen [::]:80;
+
+    root /home/vagrant/inprojectvagrant/public;
+    index index.php index.html index.htm index.nginx-debian.html;
+
+    server_name 192.168.32.10;
+    error_page 404 /404.html;
+
+    error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+            root /home/vagrant/inprojectvagrant/public;
+        }
+    location / {
+            try_files $uri $uri/ /index.php$is_args$args;
+        }
+
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+
+server {
+        listen 443;
+        server_name 192.168.32.10;
+
+        root /home/vagrant/inprojectvagrant/public;
+        index index.php index.html index.htm;
+
+        ssl on;
+        ssl_certificate /etc/nginx/ssl/inprojectvagrant.dev.cert;
+        ssl_certificate_key /etc/nginx/ssl/server.key;
+        error_page 404 /404.html;
+
+        error_page 500 502 503 504 /50x.html;
+                location = /50x.html {
+              root /home/vagrant/inprojectvagrant/public;
+        }
+        location / {
+                try_files $uri $uri/ /index.php$is_args$args;
+        }
+
+
+        location ~ \.php$ {
+            try_files $uri =404;
+            include fastcgi_params;
+            fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        }
+
+        location ~ /\.ht {
+            deny all;
+        }
+
+}
